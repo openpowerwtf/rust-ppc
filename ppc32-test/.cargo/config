@@ -1,0 +1,11 @@
+[build]
+#target = "powerpc-linux-gnu"
+# rustc --print target-list
+# rustup target add powerpc-unknown-linux-gnu
+target = "powerpc-unknown-linux-gnu"
+
+[target.powerpc-unknown-linux-gnu]
+linker = "powerpc-linux-gnu-ld"
+rustflags = [
+    "-C", "link-arg=--script=./linker.ld",
+]
