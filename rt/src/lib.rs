@@ -1,5 +1,4 @@
 #![no_std]
-#![no_main]
 
 use core::panic::PanicInfo;
 
@@ -16,14 +15,23 @@ mod start {
 */
 
 #[no_mangle]
-pub extern "C" fn _start() -> !{
-   loop {}
+pub unsafe extern "C" fn Reset() -> ! {
+   extern "Rust" {
+       fn main() -> !;
+   }
+
+   main()
 }
 
 #[panic_handler]
 fn panic (_info: &PanicInfo) -> ! {
    loop {}
 }
+
+// The reset vector, a pointer into the reset handler
+#[link_section = ".vector_table.reset_vector"]
+#[no_mangle]
+pub static RESET_VECTOR: unsafe extern "C" fn() -> ! = Reset;
 
 /* needs nightly
 #![feature(lang_items)]
