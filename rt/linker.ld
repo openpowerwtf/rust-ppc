@@ -1,12 +1,16 @@
 ENTRY(Reset)
 
-EXTERN(RESET_VECTOR)
-
 PHDRS { }
 
 SECTIONS {
 
    . = 0x00000000;
+
+   .boot : {
+      *(.rt)
+   }
+
+   . = ALIGN(1024);
 
    .text : {
       *(.text .text.*)
