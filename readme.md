@@ -5,17 +5,27 @@
 rustup target add powerpc-unknown-linux-gnu
 
 cd ppc32-test
-cargo build
+cd ppc32-test/
+cargo build --release
    Compiling ppc32-test v0.1.0 (/data/projects/rust-ppc/ppc32-test)
-   Finished dev [unoptimized + debuginfo] target(s) in 0.48s
-powerpc-linux-gnu-objdump -s target/powerpc-unknown-linux-gnu/debug/ppc32-test
+    Finished release [optimized] target(s) in 0.11s
+powerpc-linux-gnu-objdump -D target/powerpc-unknown-linux-gnu/release/ppc32-test
 
-target/powerpc-unknown-linux-gnu/debug/ppc32-test:     file format elf32-powerpc
+target/powerpc-unknown-linux-gnu/release/ppc32-test:     file format elf32-powerpc
 
-Contents of section .text:
- 0000 48000004 48000000                    H...H...
-Contents of section .got:
- 0008 4e800021 00000000 00000000 00000000  N..!............
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:	48 00 00 00 	b       0 <_start>
+
+Disassembly of section .got:
+
+00000004 <.got>:
+   4:	4e 80 00 21 	blrl
+
+00000008 <_GLOBAL_OFFSET_TABLE_>:
+
 ```
 
 * add runtime lib
