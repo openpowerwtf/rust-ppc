@@ -5,7 +5,6 @@
 rustup target add powerpc-unknown-linux-gnu
 
 cd ppc32-test
-cd ppc32-test/
 cargo build --release
    Compiling ppc32-test v0.1.0 (/data/projects/rust-ppc/ppc32-test)
     Finished release [optimized] target(s) in 0.11s
