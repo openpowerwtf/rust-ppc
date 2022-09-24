@@ -2,12 +2,17 @@
 
 #.include "defines.s"
 .set r1,1
+.set r30,30
 
 .global _start
 
 _start:
-      li       r1,_stack_0@h
-      oris     r1,r1,_stack_0@l
+      lis      r1,_stack_0@h
+      ori      r1,r1,_stack_0@l
+      #lis      r30,_GLOBAL_OFFSET_TABLE_@h
+      #ori      r30,r30,_GLOBAL_OFFSET_TABLE_@l
+      lis      r30,_got@h
+      ori      r30,r30,_got@l
 
       bl       Reset
       b        .

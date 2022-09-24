@@ -18,7 +18,8 @@ fn panic (_info: &PanicInfo) -> ! {
 // ************* runtime stuff **************************
 use core::ffi::*;
 
-#[link_section = ".rt"]
+// how to get this in obj file????
+#[link_section = ".rt.config"]
 static MAGIC: [u8;32] = *b"A Vulgar Display of OpenPower...";
 /*
 csr_base,uart,0xfff04000,,
@@ -228,11 +229,14 @@ pub unsafe extern "C" fn Reset() -> ! {
          }
 
    */
-
-   ptr::write_bytes(&mut _sbss as *mut u8, 0, count);
+   if (count > 0) {
+      ptr::write_bytes(&mut _sbss as *mut u8, 0, count);
+   }
 
    let count = &_edata as *const u8 as usize - &_sdata as *const u8 as usize;
-   ptr::copy_nonoverlapping(&_sidata as *const u8, &mut _sdata as *mut u8, count);
+   if (count > 0) {
+      ptr::copy_nonoverlapping(&_sidata as *const u8, &mut _sdata as *mut u8, count);
+   }
 
    uart_sync();
 

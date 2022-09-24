@@ -3,7 +3,7 @@ ENTRY (_start)
 MEMORY
 {
   ROM : ORIGIN = 0x00000000, LENGTH = 64K
-  RAM : ORIGIN = 0x00100000, LENGTH = 1M
+  RAM : ORIGIN = 0x00010000, LENGTH = 64K
 }
 
 PHDRS { }
@@ -36,6 +36,7 @@ SECTIONS {
       . = ALIGN(0x1000);
 		*(.rodata .rodata.* .gnu.linkonce.r.*)
 		*(.rodata1)
+		*(.got .got.*)
 		*(.got2 .got2.*)
 		*(.toc .toc.*)
 		FILL(0);
@@ -64,6 +65,9 @@ SECTIONS {
       _ebss = .;
    } > RAM
 
+   /*_got = LOADADDR(.got); not pointing correctly when setting up r30 i think; try rodata */
+   _got = LOADADDR(.rodata);
+
    _sidata = LOADADDR(.data);
    _end = .;
 
@@ -76,7 +80,7 @@ SECTIONS {
       *(.debug*)
 		*(.comment)
 
-      *(.rela.dyn)  /* wont delete it */
+       /**(.rela.dyn)  wont delete it */
 
       *(.gnu.hash)
       *(.hash*)
