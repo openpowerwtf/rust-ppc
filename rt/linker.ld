@@ -1,4 +1,10 @@
-ENTRY(Reset)
+ENTRY (_start)
+
+MEMORY
+{
+  ROM : ORIGIN = 0x00000000, LENGTH = 64K
+  RAM : ORIGIN = 0x00100000, LENGTH = 1M
+}
 
 PHDRS { }
 
@@ -7,37 +13,74 @@ SECTIONS {
    . = 0x00000000;
 
    .boot : {
-      *(.rt)
-   }
+      KEEP(*(.bootstub))
+      KEEP(*(.boot))
+      /* . = ALIGN(0x1000); need to get rid of nops! */
+   } > ROM
 
-   . = ALIGN(1024);
+   .rt.config : {
+      KEEP(*(.rt.config))
+    } > ROM
 
-   .text : {
-      *(.text .text.*)
-   }
+   .rt : {
+      KEEP(*(.rt))
+   } > ROM
+
+   .kernel : {
+      . = ALIGN(32);
+      *(.text .text* .gnu.linkonce.t.*)
+      . = ALIGN(4);
+   } > ROM
 
    .rodata : {
-      *(.rodata)
-   }
+      . = ALIGN(0x1000);
+		*(.rodata .rodata.* .gnu.linkonce.r.*)
+		*(.rodata1)
+		*(.got2 .got2.*)
+		*(.toc .toc.*)
+		FILL(0);
+		. = ALIGN(8);
+   } > ROM
 
-   __bss_start = .;
+   /*.data : AT(ADDR(.rodata) + SIZEOF(.rodata)) {*/
+   .data : {
+      . = ALIGN(8);
+       _sdata = .;
+		*(.data .data.* .sdata .gnu.linkonce.d.*)
+       _edata = .;
+		FILL(0);
+		. = ALIGN(8);
+   } > ROM AT > RAM
 
    .bss : {
-      bss = .;
-      *(.bss)
-   }
+      . = ALIGN(8); /*relative to start of ram!*/
+      _sbss = .;
+		*(.dynsbss)
+		*(.sbss .sbss.* .gnu.linkonce.sb.*)
+		*(.scommon)
+		*(.dynbss)
+		*(.bss .bss.* .gnu.linkonce.b.*)
+		*(COMMON)
+      _ebss = .;
+   } > RAM
 
-   __bss_end = .;
-   __bss_size = __bss_end - __bss_start;
-   __end = .;
+   _sidata = LOADADDR(.data);
+   _end = .;
 
-	/DISCARD/ :
-	{
-		*(.interp)
-		*(.dyn*)
-      *(.hash*)
+   _stack_size = 0x00010000;
+   _stack_0 = ORIGIN(RAM) + LENGTH(RAM) - 8;
+   _stack_1 = _stack_0 - _stack_size;
+
+	/DISCARD/ : {
+      *(.interp)
       *(.debug*)
-      *(.gnu*)
+		*(.comment)
+
+      *(.rela.dyn)  /* wont delete it */
+
+      *(.gnu.hash)
+      *(.hash*)
+		*(.dyn*)
 	}
 
 }

@@ -7,5 +7,5 @@ target = "powerpc-unknown-linux-gnu"
 [target.powerpc-unknown-linux-gnu]
 linker = "powerpc-linux-gnu-ld"
 rustflags = [
-    "-C", "link-arg=--script=./linker.ld",
+    "-C", "link-arg=--script=./linker.ld"
 ]

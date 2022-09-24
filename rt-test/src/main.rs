@@ -4,19 +4,20 @@
 #![no_main]
 
 extern crate rt;
+use::rt::printf;
 
 #[no_mangle]
 pub fn main() -> ! {
-   let mut x = 0x8675309;
    let mut  y:u32 = 0;
    y = wtf();
-   //x = x + y; memcpy, etc. not found???
+
+   unsafe {
+      printf(b"WTF! y={}\n" as *const u8, y);
+   }
+
    loop {}
 }
 
-// works with feature and nightly
-// asm! is inline to function
-// global_asm! is in global scope, outside of function
 #[no_mangle]
 pub fn wtf() -> u32 {
    use core::arch::asm;
@@ -31,7 +32,6 @@ pub fn wtf() -> u32 {
          x = inout(reg) x => x
       );
    }
-   //x += 1;  memcpy, etc. not found???
    x
 }
 
